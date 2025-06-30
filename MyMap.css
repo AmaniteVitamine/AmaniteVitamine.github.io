@@ -1,0 +1,78 @@
+body {
+  font-family: sans-serif; /* Police sans empattement, style moderne et épuré */
+  background: 
+    linear-gradient(      /* Dégrade du fond */
+      135deg,             /* Angle de 135° (diagonale gauche‑haut → droite‑bas) */
+      #74ABE2 0%,         /* Couleur de départ à 0% */
+      #e94cc4 100%        /* Couleur d’arrivée à 100% */
+    );
+  color: #fff;            /* Couleur du texte blanc pour contraster */
+  display: flex;          /* On active Flexbox sur tout le body */
+  flex-direction: column; /* Les enfants (header, main) sont empilés verticalement */
+  align-items: center;    /* On centre ces enfants horizontalement */
+  height: 100vh;          /* Hauteur = 100% de la fenêtre (viewport) */
+  margin: 0;              /* On enlève la marge par défaut du navigateur */
+}
+
+header {
+  text-align: center;     /* Centrer tout le texte à l’intérieur */
+  padding: 2rem 1rem;     /* 2rem en haut/bas, 1rem à gauche/droite */
+}
+
+main {
+  width: 100%;            /* Occupe toute la largeur dispo */
+  max-width: 1200px;      /* Mais pas plus de 1200px */
+  flex: 1;                /* Prend tout l’espace restant sous le header */
+  display: flex;          /* Flexbox pour les enfants de main */
+  gap: 1rem;              /* Espace fixe de 1rem entre les enfants */
+  padding: 0 1rem;        /* 1rem de marge intérieure gauche/droite */
+}
+
+nav {
+  width: 200px;                       /* Largeur fixe de la colonne nav */
+  height: 400px;                      /* Hauteur fixe pour voir l’effet */
+  background: rgba(255,255,255,0.15); /* Fond blanc très transparent (15%) */
+  border-radius: 15px;                /* Angles arrondis de 15px */
+  padding: 1rem;                      /* Espace intérieur autour du contenu */
+}
+
+nav a {
+  display: block;           /* Chaque lien devient un bloc plein largeur */
+  text-align: center;       /* Centre le texte à l’intérieur du bloc */
+  color: #fff;              /* Texte blanc */
+  text-decoration: none;    /* Pas de soulignement par défaut */
+  margin-bottom: 1rem;      /* Espace en dessous de chaque lien */
+  transition: color 0.2s;   /* Anime le changement de couleur en 0.2 s */
+  font-weight: bold;        /* Texte en gras */
+}
+
+nav a:hover {
+  color: #ca509d;           /* Couleur qui apparaît au survol */
+}
+
+nav a.up-text {
+  color: #ace5f9;           /* Couleur spécifique pour “Dimensions” */
+  text-align: center;       /* (répété) centre le texte */
+  font-size: 1.2rem;        /* Taille de police plus grande */
+  font-weight: bold;        /* (répété) texte en gras */
+  cursor: default;          /* Curseur normal, pas la main cliquable */
+  pointer-events: none;     /* Désactive tout clic sur ce lien */
+  text-decoration: underline; /* Soulignement pour insister */
+}
+
+nav a.simple-text {
+  color: #ffffff;           /* Texte blanc classique */
+  cursor: default;          /* Curseur normal */
+  text-align: left;         /* Aligne le texte à gauche */
+  pointer-events: none;     /* Pas cliquable */
+  margin-bottom: 0.8rem;    /* Espacement un peu plus petit que pour les liens */
+  font-weight: normal;      /* Poids normal (pas de gras) */
+}
+
+.englobeur {
+  display: flex;            /* Active Flexbox sur le conteneur */
+  flex-direction: row;      /* Aligne les enfants sur une ligne */
+  align-items: flex-start;  /* Aligne le nav et le canvas en haut */
+  gap: 1rem;
+}
+
