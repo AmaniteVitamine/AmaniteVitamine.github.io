@@ -30,28 +30,25 @@ main {
 
 nav {
   width: 200px;                       /* Largeur fixe de la colonne nav */
-  height: 400px;                      /* Hauteur fixe pour voir l’effet */
+  height: 370px;                      /* Hauteur fixe pour voir l’effet */
   background: rgba(255,255,255,0.15); /* Fond blanc très transparent (15%) */
   border-radius: 15px;                /* Angles arrondis de 15px */
   padding: 1rem;                      /* Espace intérieur autour du contenu */
+  position: relative;
 }
 
 nav a {
   display: block;           /* Chaque lien devient un bloc plein largeur */
   text-align: center;       /* Centre le texte à l’intérieur du bloc */
-  color: #fff;              /* Texte blanc */
+  color: #fff;            /* Texte blanc */
   text-decoration: none;    /* Pas de soulignement par défaut */
   margin-bottom: 1rem;      /* Espace en dessous de chaque lien */
   transition: color 0.2s;   /* Anime le changement de couleur en 0.2 s */
   font-weight: bold;        /* Texte en gras */
 }
 
-nav a:hover {
-  color: #ca509d;           /* Couleur qui apparaît au survol */
-}
-
 nav a.up-text {
-  color: #ace5f9;           /* Couleur spécifique pour “Dimensions” */
+  color: #ace5f9;         /* Couleur spécifique pour “Dimensions” */
   text-align: center;       /* (répété) centre le texte */
   font-size: 1.2rem;        /* Taille de police plus grande */
   font-weight: bold;        /* (répété) texte en gras */
@@ -61,7 +58,7 @@ nav a.up-text {
 }
 
 nav a.simple-text {
-  color: #ffffff;           /* Texte blanc classique */
+  color: #ffffff;         /* Texte blanc classique */
   cursor: default;          /* Curseur normal */
   text-align: left;         /* Aligne le texte à gauche */
   pointer-events: none;     /* Pas cliquable */
@@ -73,6 +70,22 @@ nav a.simple-text {
   display: flex;            /* Active Flexbox sur le conteneur */
   flex-direction: row;      /* Aligne les enfants sur une ligne */
   align-items: flex-start;  /* Aligne le nav et le canvas en haut */
-  gap: 1rem;
+  gap: 2rem;
 }
 
+button {
+  display: block;
+  margin: 0 auto;
+  font-size: 1.1rem;
+  line-height: 1.5;
+  }
+
+.stats-panel {
+  border-radius: 10px;
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  background: rgba(255, 255, 255, 0.25);
+  padding: 0.8rem 1rem;
+  text-align: left;
+}
