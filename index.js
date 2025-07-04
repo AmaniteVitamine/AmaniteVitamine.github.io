@@ -59,7 +59,7 @@ function generateMapData(width, height, tpixel) {
   for (let y = 0; y < height; y++) {
     for (let x = 0; x < width; x++) {
       const grey = Math.floor(Math.random() * 256);
-      const alpha = Math.random();
+      const alpha = Math.random()*0.5 + 0.5;
       mapData.push({x : x * tpixel, y : y * tpixel, size : tpixel, grey, alpha});
     }
   }
