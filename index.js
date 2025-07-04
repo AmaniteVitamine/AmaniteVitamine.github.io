@@ -2,14 +2,38 @@ var c = document.getElementById("myCanvas");
 c.setAttribute('style', 'display: none');
 var ctx = c.getContext("2d");
 
-document.addEventListener('DOMContentLoaded', () => {
-    DrawMap();
-  });
-
 const height = document.getElementById("height");
 const width = document.getElementById("width");
+const tp = document.getElementById("tp");
 const myButton = document.getElementById("Creer");
 const myButtonDownload = document.getElementById("Telecharger");
+
+
+
+
+document.addEventListener('DOMContentLoaded', () => {
+    TestValues(width.value,height.value);
+    const mapDatas = generateMapData(width.value, height.value, tp.value);
+    drawMap(c, ctx, mapDatas);
+  });
+
+myButton.addEventListener("click", () => {
+  TestValues(width.value,height.value);
+  const mapDatas = generateMapData(width.value, height.value, tp.value);
+  drawMap(c, ctx, mapDatas);
+});
+
+myButtonDownload.addEventListener("click", () => {
+  const dataURL = c.toDataURL("image/png");
+  const link = document.createElement("a");
+  link.href = dataURL;
+  link.download = "MyMap.png";
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+});
+
+
 
 function TestValues(width, height) {
   if (width.trim() === "" || height.trim() === "") {
@@ -30,42 +54,28 @@ function TestValues(width, height) {
     }
 }
 
-function DrawMap() {
-    c.width  = width.value*5;
-    c.height = height.value*5;
-
-    let rouge = 0;
-    let bleu = 0;
-
-    for (let y = 0; y < height.value*5; y = y + 5) {
-      for (let x = 0; x < width.value*5; x = x + 5) {
-        const grey  = Math.floor(Math.random() * 256);
-        const alpha = Math.random();
-        ctx.fillStyle = `rgba(${grey}, ${grey}, ${grey}, ${alpha})`;
-        ctx.fillRect(x, y, 5, 5);
-      }
+function generateMapData(width, height, tpixel) {
+  const mapData = [];
+  for (let y = 0; y < height; y++) {
+    for (let x = 0; x < width; x++) {
+      const grey = Math.floor(Math.random() * 256);
+      const alpha = Math.random();
+      mapData.push({x : x * tpixel, y : y * tpixel, size : tpixel, grey, alpha});
     }
-
-
-    c.style.display = "block";
-
-    document.getElementById("rougeCount").textContent = rouge;
-    document.getElementById("bleuCount").textContent  = bleu;
+  }
+  return mapData;
 }
 
-myButton.addEventListener("click", () => {
-  TestValues(width.value,height.value);
-  DrawMap();
-});
+function drawMap(canvas, ctx, mapData) {
+  canvas.width = mapData[mapData.length - 1].x;
+  canvas.height = mapData[mapData.length - 1].y;
+  mapData.forEach(cell => {
+    const {x, y, size, grey, alpha} = cell;
+    ctx.fillStyle = `rgba(${grey}, ${grey}, ${grey}, ${alpha})`;
+    ctx.fillRect(x, y, size, size);
+  });
+  canvas.style.display = "block";
+}
 
-myButtonDownload.addEventListener("click", () => {
-  const dataURL = c.toDataURL("image/png");
-  const link = document.createElement("a");
-  link.href = dataURL;
-  link.download = "MyMap.png";
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-});
 
 
