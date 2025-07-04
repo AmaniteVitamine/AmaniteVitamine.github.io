@@ -2,6 +2,9 @@ var c = document.getElementById("myCanvas");
 c.setAttribute('style', 'display: none');
 var ctx = c.getContext("2d");
 
+document.addEventListener('DOMContentLoaded', () => {
+    MyMap();
+  });
 
 const height = document.getElementById("height");
 const width = document.getElementById("width");
@@ -17,12 +20,12 @@ function MyMap() {
       alert("Erreur : veuillez saisir des dimensions strictement positives.");  
       return;
     }
-    if (width.value > 1000) {
-      alert("Erreur : veuillez saisir une longueur inférieure ou égale à 1000.");  
+    if (width.value > 5000) {
+      alert("Erreur : veuillez saisir une longueur inférieure ou égale à 5000.");  
       return;
     }
-    if (height.value > 450) {
-      alert("Erreur : veuillez saisir une hauteur inférieure ou égale à 450.");  
+    if (height.value > 5000) {
+      alert("Erreur : veuillez saisir une hauteur inférieure ou égale à 5000.");  
       return;
     }
     
@@ -34,16 +37,13 @@ function MyMap() {
 
     for (let y = 0; y < height.value; y++) {
       for (let x = 0; x < width.value; x++) {
-        if (Math.random() < 0.5) {
-          ctx.fillStyle = "red";
-          rouge++;
-        } else {
-          ctx.fillStyle = "blue";
-          bleu++;
-        }
-      ctx.fillRect(x, y, 1, 1);
+        const grey  = Math.floor(Math.random() * 256);
+        const alpha = Math.random();
+        ctx.fillStyle = `rgba(${grey}, ${grey}, ${grey}, ${alpha})`;
+        ctx.fillRect(x, y, 1, 1);
       }
     }
+
 
     c.style.display = "block";
 
