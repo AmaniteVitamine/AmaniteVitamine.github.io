@@ -3,7 +3,7 @@ c.setAttribute('style', 'display: none');
 var ctx = c.getContext("2d");
 
 document.addEventListener('DOMContentLoaded', () => {
-    MyMap();
+    DrawMap();
   });
 
 const height = document.getElementById("height");
@@ -11,7 +11,7 @@ const width = document.getElementById("width");
 const myButton = document.getElementById("Creer");
 const myButtonDownload = document.getElementById("Telecharger");
 
-function MyMap() {
+function DrawMap() {
     if (width.value.trim() === "" || height.value.trim() === "") {
       alert("Erreur : veuillez compléter toutes les cases.");  
       return;
@@ -52,7 +52,7 @@ function MyMap() {
 }
 
 myButton.addEventListener("click", () => {
-  MyMap();
+  DrawMap();
 });
 
 myButtonDownload.addEventListener("click", () => {
