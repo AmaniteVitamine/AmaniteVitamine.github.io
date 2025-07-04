@@ -73,6 +73,10 @@ nav a.simple-text {
   gap: 2rem;
 }
 
+#myCanvas {
+    border: 2px solid black;
+  }
+
 button {
   display: block;
   margin: 0 auto;

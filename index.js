@@ -29,18 +29,18 @@ function DrawMap() {
       return;
     }
     
-    c.width  = width.value;
-    c.height = height.value;
+    c.width  = width.value*5;
+    c.height = height.value*5;
 
     let rouge = 0;
     let bleu = 0;
 
-    for (let y = 0; y < height.value; y++) {
-      for (let x = 0; x < width.value; x++) {
+    for (let y = 0; y < height.value*5; y = y + 5) {
+      for (let x = 0; x < width.value*5; x = x + 5) {
         const grey  = Math.floor(Math.random() * 256);
         const alpha = Math.random();
         ctx.fillStyle = `rgba(${grey}, ${grey}, ${grey}, ${alpha})`;
-        ctx.fillRect(x, y, 1, 1);
+        ctx.fillRect(x, y, 5, 5);
       }
     }
 
