@@ -11,24 +11,26 @@ const width = document.getElementById("width");
 const myButton = document.getElementById("Creer");
 const myButtonDownload = document.getElementById("Telecharger");
 
-function DrawMap() {
-    if (width.value.trim() === "" || height.value.trim() === "") {
+function TestValues(width, height) {
+  if (width.trim() === "" || height.trim() === "") {
       alert("Erreur : veuillez compléter toutes les cases.");  
       return;
     }
-    if (width.value <= 0 || height.value <= 0) {
+    if (width <= 0 || height <= 0) {
       alert("Erreur : veuillez saisir des dimensions strictement positives.");  
       return;
     }
-    if (width.value > 5000) {
+    if (width > 5000) {
       alert("Erreur : veuillez saisir une longueur inférieure ou égale à 5000.");  
       return;
     }
-    if (height.value > 5000) {
+    if (height > 5000) {
       alert("Erreur : veuillez saisir une hauteur inférieure ou égale à 5000.");  
       return;
     }
-    
+}
+
+function DrawMap() {
     c.width  = width.value*5;
     c.height = height.value*5;
 
@@ -52,6 +54,7 @@ function DrawMap() {
 }
 
 myButton.addEventListener("click", () => {
+  TestValues(width.value,height.value);
   DrawMap();
 });
 
