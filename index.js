@@ -12,13 +12,18 @@ const myButtonDownload = document.getElementById("Telecharger");
 
 
 document.addEventListener('DOMContentLoaded', () => {
-    TestValues(width.value,height.value);
-    const mapDatas = generateMapData(width.value, height.value, tp.value);
-    drawMap(c, ctx, mapDatas);
-  });
+    if (!TestValues(width.value,height.value)) {
+    return;
+  };
+  const mapDatas = generateMapData(width.value, height.value, tp.value);
+  drawMap(c, ctx, mapDatas);
+});
+
 
 myButton.addEventListener("click", () => {
-  TestValues(width.value,height.value);
+  if (!TestValues(width.value,height.value)) {
+    return;
+  };
   const mapDatas = generateMapData(width.value, height.value, tp.value);
   drawMap(c, ctx, mapDatas);
 });
@@ -38,26 +43,28 @@ myButtonDownload.addEventListener("click", () => {
 function TestValues(width, height) {
   if (width.trim() === "" || height.trim() === "") {
       alert("Erreur : veuillez compléter toutes les cases.");  
-      return;
+      return false;
     }
     if (width <= 0 || height <= 0) {
       alert("Erreur : veuillez saisir des dimensions strictement positives.");  
-      return;
+      return false;
     }
     if (width > 5000) {
       alert("Erreur : veuillez saisir une longueur inférieure ou égale à 5000.");  
-      return;
+      return false;
     }
     if (height > 5000) {
       alert("Erreur : veuillez saisir une hauteur inférieure ou égale à 5000.");  
-      return;
+      return false;
     }
+    return true;
 }
 
 function generateMapData(width, height, tpixel) {
+  Math.seedrandom('2');
   const mapData = [];
-  for (let y = 0; y < height; y++) {
-    for (let x = 0; x < width; x++) {
+  for (let y = 0; y <= height; y++) {
+    for (let x = 0; x <= width; x++) {
       const grey = Math.floor(Math.random() * 256);
       const alpha = Math.random()*0.5 + 0.5;
       mapData.push({x : x * tpixel, y : y * tpixel, size : tpixel, grey, alpha});
