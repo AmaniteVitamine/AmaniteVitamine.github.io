@@ -5,26 +5,44 @@ var ctx = c.getContext("2d");
 const height = document.getElementById("height");
 const width = document.getElementById("width");
 const tp = document.getElementById("tp");
+const seed2 = document.getElementById("seed");
+
 const myButton = document.getElementById("Creer");
 const myButtonDownload = document.getElementById("Telecharger");
 
 
+function RandomWithSeed(seedinput) {
+  let state = seedinput % 2147483647;
+  if (state <= 0) state += 2147483646;
+  
+  return function() {
+    state = (state * 16807) % 2147483647;
+    return (state - 1) / 2147483646;
+  };
+}
 
+let rngGlobal = null;
+let lastSeed   = null;
 
 document.addEventListener('DOMContentLoaded', () => {
-    if (!TestValues(width.value,height.value)) {
-    return;
-  };
-  const mapDatas = generateMapData(width.value, height.value, tp.value);
+  if (seed2.value !== lastSeed) {
+    lastSeed   = seed2.value;
+    rngGlobal  = RandomWithSeed(seed2.value);
+  }
+  const mapDatas = generateMapData(width.value, height.value, tp.value, rngGlobal);
   drawMap(c, ctx, mapDatas);
 });
 
 
 myButton.addEventListener("click", () => {
-  if (!TestValues(width.value,height.value)) {
+  if (!TestValues(width.value,height.value,seed2.value)) {
     return;
   };
-  const mapDatas = generateMapData(width.value, height.value, tp.value);
+  if (seed2.value !== lastSeed) {
+    lastSeed   = seed2.value;
+    rngGlobal  = RandomWithSeed(seed2.value);
+  }
+  const mapDatas = generateMapData(width.value, height.value, tp.value, rngGlobal);
   drawMap(c, ctx, mapDatas);
 });
 
@@ -40,7 +58,7 @@ myButtonDownload.addEventListener("click", () => {
 
 
 
-function TestValues(width, height) {
+function TestValues(width, height, seed) {
   if (width.trim() === "" || height.trim() === "") {
       alert("Erreur : veuillez compléter toutes les cases.");  
       return false;
@@ -57,16 +75,23 @@ function TestValues(width, height) {
       alert("Erreur : veuillez saisir une hauteur inférieure ou égale à 5000.");  
       return false;
     }
+    if (isNaN(seed)) {
+      alert("Erreur : veuillez saisir un nombre pour votre seed.")
+      return false;
+    }
+    if (seed % 1 !== 0) {
+      alert("Erreur : veuillez saisir un nombre entier pour votre seed.")
+      return false;
+    }
     return true;
 }
 
-function generateMapData(width, height, tpixel) {
-  Math.seedrandom('2');
+function generateMapData(width, height, tpixel, rng) {
   const mapData = [];
   for (let y = 0; y <= height; y++) {
     for (let x = 0; x <= width; x++) {
-      const grey = Math.floor(Math.random() * 256);
-      const alpha = Math.random()*0.5 + 0.5;
+      const grey = Math.floor(rng() * 256);
+      const alpha = rng()*0.5 + 0.5;
       mapData.push({x : x * tpixel, y : y * tpixel, size : tpixel, grey, alpha});
     }
   }
@@ -83,6 +108,5 @@ function drawMap(canvas, ctx, mapData) {
   });
   canvas.style.display = "block";
 }
-
 
 
