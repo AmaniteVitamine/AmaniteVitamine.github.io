@@ -6,6 +6,8 @@ const height = document.getElementById("height");
 const width = document.getElementById("width");
 const tp = document.getElementById("tp");
 const seed2 = document.getElementById("seed");
+const sommets = document.getElementById("som");
+const fonds = document.getElementById("fon");
 
 const myButton = document.getElementById("Creer");
 const myButtonDownload = document.getElementById("Telecharger");
@@ -30,12 +32,15 @@ document.addEventListener('DOMContentLoaded', () => {
     rngGlobal  = RandomWithSeed(seed2.value);
   }
   const mapDatas = generateMapData(width.value, height.value, rngGlobal);
+  const mapSommets = generateTopData(width.value, height.value, sommets.value, rngGlobal);
+
+  mapDatas.push(...mapSommets);
   drawMap(c, ctx, mapDatas, tp.value, height.value, width.value);
 });
 
 
 myButton.addEventListener("click", () => {
-  if (!TestValues(width.value,height.value,seed2.value)) {
+  if (!TestValues(width.value,height.value,seed2.value,sommets.value)) {
     return;
   };
   if (seed2.value !== lastSeed) {
@@ -43,6 +48,9 @@ myButton.addEventListener("click", () => {
     rngGlobal  = RandomWithSeed(seed2.value);
   }
   const mapDatas = generateMapData(width.value, height.value, rngGlobal);
+  const mapSommets = generateTopData(width.value, height.value, sommets.value, rngGlobal);
+
+  mapDatas.push(...mapSommets);
   drawMap(c, ctx, mapDatas, tp.value, height.value, width.value);
 });
 
@@ -57,8 +65,7 @@ myButtonDownload.addEventListener("click", () => {
 });
 
 
-
-function TestValues(width, height, seed) {
+function TestValues(width, height, seed, nbtop) {
   if (width.trim() === "" || height.trim() === "") {
       alert("Erreur : veuillez compléter toutes les cases.");  
       return false;
@@ -83,21 +90,46 @@ function TestValues(width, height, seed) {
       alert("Erreur : veuillez saisir un nombre entier pour votre seed.")
       return false;
     }
+    if (width * height < nbtop) {
+      alert("Erreur : le nombre de sommets doit être inférieur ou égal au nombre total de pixels.");
+      return false;
+    }
     return true;
 }
+
 
 function generateMapData(width, height, rng) {
   const mapData = [];
   for (let y = 0; y < height; y++) {
     for (let x = 0; x < width; x++) {
-      const r = Math.floor(rng() * 256);
+      /*const r = Math.floor(rng() * 256);
       const g = Math.floor(rng() * 256);
       const b = Math.floor(rng() * 256);
-      mapData.push({x, y, r, g, b});
+      mapData.push({x, y, r, g, b});*/
+      const val = 255;
+      mapData.push({x, y, r : val, g : val, b : val});
     }
   }
   return mapData;
 }
+
+function generateTopData(width, height, nbtop, rng) {
+  const mapSommets = [];
+  const used = new Set();
+
+  while (mapSommets.length < nbtop) {
+    const x = Math.floor(rng() * width);
+    const y = Math.floor(rng() * height);
+    const key = `${x},${y}`;
+
+    if (!used.has(key)) {
+      used.add(key);
+      mapSommets.push({ x, y, r: 0, g: 0, b: 0 });
+    }
+  }
+  return mapSommets;
+}
+
 
 function drawMap(canvas, ctx, mapData, tpixel, height, width) {
   canvas.width  = width * tpixel;

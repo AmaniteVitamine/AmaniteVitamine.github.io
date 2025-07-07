@@ -30,7 +30,7 @@ main {
 
 nav {
   width: 200px;                       /* Largeur fixe de la colonne nav */
-  height: 400px;                      /* Hauteur fixe pour voir l’effet */
+  height: 500px;                      /* Hauteur fixe pour voir l’effet */
   background: rgba(255,255,255,0.15); /* Fond blanc très transparent (15%) */
   border-radius: 15px;                /* Angles arrondis de 15px */
   padding: 1rem;                      /* Espace intérieur autour du contenu */
@@ -62,7 +62,7 @@ nav a.simple-text {
   cursor: default;          /* Curseur normal */
   text-align: left;         /* Aligne le texte à gauche */
   pointer-events: none;     /* Pas cliquable */
-  margin-bottom: 0.8rem;    /* Espacement un peu plus petit que pour les liens */
+  margin-bottom: 0.25rem;    /* Espacement un peu plus petit que pour les liens */
   font-weight: normal;      /* Poids normal (pas de gras) */
 }
 
