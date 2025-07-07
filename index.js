@@ -29,8 +29,8 @@ document.addEventListener('DOMContentLoaded', () => {
     lastSeed   = seed2.value;
     rngGlobal  = RandomWithSeed(seed2.value);
   }
-  const mapDatas = generateMapData(width.value, height.value, tp.value, rngGlobal);
-  drawMap(c, ctx, mapDatas);
+  const mapDatas = generateMapData(width.value, height.value, rngGlobal);
+  drawMap(c, ctx, mapDatas, tp.value, height.value, width.value);
 });
 
 
@@ -42,8 +42,8 @@ myButton.addEventListener("click", () => {
     lastSeed   = seed2.value;
     rngGlobal  = RandomWithSeed(seed2.value);
   }
-  const mapDatas = generateMapData(width.value, height.value, tp.value, rngGlobal);
-  drawMap(c, ctx, mapDatas);
+  const mapDatas = generateMapData(width.value, height.value, rngGlobal);
+  drawMap(c, ctx, mapDatas, tp.value, height.value, width.value);
 });
 
 myButtonDownload.addEventListener("click", () => {
@@ -86,27 +86,32 @@ function TestValues(width, height, seed) {
     return true;
 }
 
-function generateMapData(width, height, tpixel, rng) {
+function generateMapData(width, height, rng) {
   const mapData = [];
-  for (let y = 0; y <= height; y++) {
-    for (let x = 0; x <= width; x++) {
-      const grey = Math.floor(rng() * 256);
-      const alpha = rng()*0.5 + 0.5;
-      mapData.push({x : x * tpixel, y : y * tpixel, size : tpixel, grey, alpha});
+  for (let y = 0; y < height; y++) {
+    for (let x = 0; x < width; x++) {
+      const r = Math.floor(rng() * 256);
+      const g = Math.floor(rng() * 256);
+      const b = Math.floor(rng() * 256);
+      mapData.push({x, y, r, g, b});
     }
   }
   return mapData;
 }
 
-function drawMap(canvas, ctx, mapData) {
-  canvas.width = mapData[mapData.length - 1].x;
-  canvas.height = mapData[mapData.length - 1].y;
-  mapData.forEach(cell => {
-    const {x, y, size, grey, alpha} = cell;
-    ctx.fillStyle = `rgba(${grey}, ${grey}, ${grey}, ${alpha})`;
-    ctx.fillRect(x, y, size, size);
-  });
-  canvas.style.display = "block";
+function drawMap(canvas, ctx, mapData, tpixel, height, width) {
+  canvas.width  = width * tpixel;
+  canvas.height = height * tpixel;
+  for (let i = 0; i < mapData.length; i++) {
+    const cell = mapData[i];
+    const x = cell.x * tpixel;
+    const y = cell.y * tpixel;
+    ctx.fillStyle = `rgb(${cell.r}, ${cell.g}, ${cell.b})`;
+    ctx.fillRect(x, y, tpixel, tpixel);
+  }
+  canvas.style.display = 'block';
 }
+
+
 
 

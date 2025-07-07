@@ -30,7 +30,7 @@ main {
 
 nav {
   width: 200px;                       /* Largeur fixe de la colonne nav */
-  height: 380px;                      /* Hauteur fixe pour voir l’effet */
+  height: 400px;                      /* Hauteur fixe pour voir l’effet */
   background: rgba(255,255,255,0.15); /* Fond blanc très transparent (15%) */
   border-radius: 15px;                /* Angles arrondis de 15px */
   padding: 1rem;                      /* Espace intérieur autour du contenu */
