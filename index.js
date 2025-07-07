@@ -38,7 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 myButton.addEventListener("click", () => {
-  if (!TestValues(width.value,height.value,seed2.value,sommets.value)) {
+  if (!TestValues(width.value,height.value,seed2.value,sommets.value, fonds.value)) {
     return;
   };
   if (seed2.value !== lastSeed) {
@@ -46,7 +46,6 @@ myButton.addEventListener("click", () => {
     rngGlobal  = RandomWithSeed(seed2.value);
   }
   const mapDatas =  generateTopAndBotData(width.value, height.value, sommets.value, fonds.value, rngGlobal);
-
   drawMap(c, ctx, mapDatas, tp.value, height.value, width.value);
 });
 
@@ -61,7 +60,7 @@ myButtonDownload.addEventListener("click", () => {
 });
 
 
-function TestValues(width, height, seed, nbtop) {
+function TestValues(width, height, seed, nbtop, nbbot) {
   if (width.trim() === "" || height.trim() === "") {
       alert("Erreur : veuillez compléter toutes les cases.");  
       return false;
@@ -86,8 +85,8 @@ function TestValues(width, height, seed, nbtop) {
       alert("Erreur : veuillez saisir un nombre entier pour votre seed.")
       return false;
     }
-    if (width * height < nbtop) {
-      alert("Erreur : le nombre de sommets doit être inférieur ou égal au nombre total de pixels.");
+    if (Number(width) * Number(height) < Number(nbtop) + Number(nbbot)) {
+      alert("Erreur : le nombre de sommets et de fonds doit être inférieur ou égal au nombre total de pixels.");
       return false;
     }
     return true;
@@ -120,7 +119,7 @@ function generateTopAndBotData(width, height, nbtop, nbbot, rng) {
 
     if (!used.has(key)) {
       used.add(key);
-      mapInfos.push({ x, y, r: 0, g: 0, b: 0 });
+      mapInfos.push({x, y, r : 0, g : 0, b : 0});
     }
   }
 
@@ -131,9 +130,50 @@ function generateTopAndBotData(width, height, nbtop, nbbot, rng) {
 
     if (!used.has(key)) {
       used.add(key);
-      mapInfos.push({ x, y, r: 255, g: 255, b: 255 });
+      mapInfos.push({x, y, r : 255, g : 255, b : 255});
+    } 
+  }
+
+  const mapStats = [];
+  for (let y = 0; y < height; y++) {
+    for (let x = 0; x < width; x++) {
+      const key = `${x}, ${y}`;
+
+      let extremum1 = {d : Infinity, h : null};
+      let extremum2 = {d : Infinity, h : null};
+
+      for (let i = 0; i < Number(nbtop) + Number(nbbot); i++) {
+        let distance = Math.sqrt((x - mapInfos[i].x)*(x - mapInfos[i].x) + (y - mapInfos[i].y)*(y - mapInfos[i].y));
+        if (distance < extremum1.d) {
+          extremum1.d = distance;
+          if (mapInfos[i].r == 255) {
+            extremum1.h = 0;
+          }
+          else {
+            extremum1.h = 1;
+          }
+        }
+        else if (distance < extremum2.d) {
+          extremum2.d = distance;
+          if (mapInfos[i].r == 255) {
+            extremum2.h = 0;
+          }
+          else {
+            extremum2.h = 1;
+          }
+        }
+      }
+
+      let hauteur = (extremum2.d * extremum1.h / (extremum1.d + extremum2.d) + extremum1.d * extremum2.h / (extremum1.d + extremum2.d)) * 255;
+
+      if (!used.has(key)) {
+        used.add(key);
+        mapStats.push({x, y, r : hauteur, g : hauteur, b : hauteur});
+      }
     }
   }
+
+  mapInfos.push(...mapStats);
 
   return mapInfos;
 }
@@ -168,7 +208,4 @@ function drawMap(canvas, ctx, mapData, tpixel, height, width) {
   }
   canvas.style.display = 'block';
 }
-
-
-
 
