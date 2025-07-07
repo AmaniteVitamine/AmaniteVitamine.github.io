@@ -31,10 +31,8 @@ document.addEventListener('DOMContentLoaded', () => {
     lastSeed   = seed2.value;
     rngGlobal  = RandomWithSeed(seed2.value);
   }
-  const mapDatas = generateMapData(width.value, height.value, rngGlobal);
-  const mapSommets = generateTopData(width.value, height.value, sommets.value, rngGlobal);
+  const mapDatas =  generateTopAndBotData(width.value, height.value, sommets.value, fonds.value, rngGlobal);
 
-  mapDatas.push(...mapSommets);
   drawMap(c, ctx, mapDatas, tp.value, height.value, width.value);
 });
 
@@ -47,10 +45,8 @@ myButton.addEventListener("click", () => {
     lastSeed   = seed2.value;
     rngGlobal  = RandomWithSeed(seed2.value);
   }
-  const mapDatas = generateMapData(width.value, height.value, rngGlobal);
-  const mapSommets = generateTopData(width.value, height.value, sommets.value, rngGlobal);
+  const mapDatas =  generateTopAndBotData(width.value, height.value, sommets.value, fonds.value, rngGlobal);
 
-  mapDatas.push(...mapSommets);
   drawMap(c, ctx, mapDatas, tp.value, height.value, width.value);
 });
 
@@ -113,22 +109,51 @@ function generateMapData(width, height, rng) {
   return mapData;
 }
 
-function generateTopData(width, height, nbtop, rng) {
-  const mapSommets = [];
+function generateTopAndBotData(width, height, nbtop, nbbot, rng) {
+  const mapInfos = [];
   const used = new Set();
 
-  while (mapSommets.length < nbtop) {
+  while (mapInfos.length < nbtop) {
     const x = Math.floor(rng() * width);
     const y = Math.floor(rng() * height);
     const key = `${x},${y}`;
 
     if (!used.has(key)) {
       used.add(key);
-      mapSommets.push({ x, y, r: 0, g: 0, b: 0 });
+      mapInfos.push({ x, y, r: 0, g: 0, b: 0 });
     }
   }
-  return mapSommets;
+
+  while (mapInfos.length < Number(nbtop) + Number(nbbot)) {
+    const x = Math.floor(rng() * width);
+    const y = Math.floor(rng() * height);
+    const key = `${x},${y}`;
+
+    if (!used.has(key)) {
+      used.add(key);
+      mapInfos.push({ x, y, r: 255, g: 255, b: 255 });
+    }
+  }
+
+  return mapInfos;
 }
+
+/*function generateBotData(width, height, nbbot, rng) {
+  const mapFonds = [];
+  const used = new Set();
+
+  while (mapFonds.length < nbbot) {
+    const x = Math.floor(rng() * width);
+    const y = Math.floor(rng() * height);
+    const key = `${x},${y}`;
+
+    if (!used.has(key)) {
+      used.add(key);
+      mapFonds.push({ x, y, r: 255, g: 255, b: 255 });
+    }
+  }
+  return mapFonds;
+}*/
 
 
 function drawMap(canvas, ctx, mapData, tpixel, height, width) {
