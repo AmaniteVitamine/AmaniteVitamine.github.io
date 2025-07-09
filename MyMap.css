@@ -87,9 +87,9 @@ button {
 .stats-panel {
   border-radius: 10px;
   position: fixed;
-  top: 1rem;
-  right: 1rem;
+  top: 3rem;
+  right: 5rem;
   background: rgba(255, 255, 255, 0.25);
-  padding: 0.8rem 1rem;
+  padding: 0.8rem 0.8rem;
   text-align: left;
 }

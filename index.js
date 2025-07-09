@@ -8,6 +8,7 @@ const tp = document.getElementById("tp");
 const seed2 = document.getElementById("seed");
 const sommets = document.getElementById("som");
 const fonds = document.getElementById("fon");
+const p = document.getElementById("p");
 
 const myButton = document.getElementById("Creer");
 const myButtonDownload = document.getElementById("Telecharger");
@@ -38,7 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 myButton.addEventListener("click", () => {
-  if (!TestValues(width.value,height.value,seed2.value,sommets.value, fonds.value)) {
+  if (!TestValues(width.value,height.value,seed2.value,sommets.value, fonds.value, p.value, tp.value)) {
     return;
   };
   if (seed2.value !== lastSeed) {
@@ -60,11 +61,39 @@ myButtonDownload.addEventListener("click", () => {
 });
 
 
-function TestValues(width, height, seed, nbtop, nbbot) {
-  if (width.trim() === "" || height.trim() === "") {
+function TestValues(width, height, seed, nbtop, nbbot, power, tpixel) {
+    if (width.trim() === "" || height.trim() === "" || power.trim() === "" || nbbot.trim() === "" || nbtop.trim() === "" || seed.trim() === "" || tpixel.trim() === "") {
       alert("Erreur : veuillez compléter toutes les cases.");  
       return false;
     }
+
+
+    if (width % 1 !== 0) {
+      alert("Erreur : veuillez saisir un nombre entier pour votre longueur.");  
+      return false;
+    }
+    if (height % 1 !== 0) {
+      alert("Erreur : veuillez saisir un nombre entier pour votre hauteur.");  
+      return false;
+    }
+    if (seed % 1 !== 0) {
+      alert("Erreur : veuillez saisir un nombre entier pour votre seed.")
+      return false;
+    }
+    if (nbtop % 1 !== 0) {
+      alert("Erreur : veuillez saisir un nombre entier pour votre nombre de sommets.");  
+      return false;
+    }
+    if (nbbot % 1 !== 0) {
+      alert("Erreur : veuillez saisir un nombre entier pour votre nombre de fonds.");  
+      return false;
+    }
+    if (tpixel % 1 !== 0) {
+      alert("Erreur : veuillez saisir un nombre entier pour votre taille de pixel.")
+      return false;
+    }
+
+
     if (width <= 0 || height <= 0) {
       alert("Erreur : veuillez saisir des dimensions strictement positives.");  
       return false;
@@ -77,35 +106,33 @@ function TestValues(width, height, seed, nbtop, nbbot) {
       alert("Erreur : veuillez saisir une hauteur inférieure ou égale à 5000.");  
       return false;
     }
-    if (isNaN(seed)) {
-      alert("Erreur : veuillez saisir un nombre pour votre seed.")
+    if (power > 10 || power < 0.1) {
+      alert("Erreur : veuillez saisir une puissance de pente comprise entre 0.1 et 10.");  
       return false;
     }
-    if (seed % 1 !== 0) {
-      alert("Erreur : veuillez saisir un nombre entier pour votre seed.")
+    if (nbtop > 500) {
+      alert("Erreur : veuillez saisir un nombre de sommets inférieur à 500.");  
       return false;
     }
+    if (nbbot > 500) {
+      alert("Erreur : veuillez saisir un nombre de fonds inférieur à 500.");  
+      return false;
+    }
+    if (nbtop <= 0) {
+      alert("Erreur : veuillez saisir un nombre de sommets strictement positif.");  
+      return false;
+    }
+    if (nbbot <= 0) {
+      alert("Erreur : veuillez saisir un nombre de fonds strictement positif.");  
+      return false;
+    }
+
     if (Number(width) * Number(height) < Number(nbtop) + Number(nbbot)) {
       alert("Erreur : le nombre de sommets et de fonds doit être inférieur ou égal au nombre total de pixels.");
       return false;
     }
+    
     return true;
-}
-
-
-function generateMapData(width, height, rng) {
-  const mapData = [];
-  for (let y = 0; y < height; y++) {
-    for (let x = 0; x < width; x++) {
-      /*const r = Math.floor(rng() * 256);
-      const g = Math.floor(rng() * 256);
-      const b = Math.floor(rng() * 256);
-      mapData.push({x, y, r, g, b});*/
-      const val = 255;
-      mapData.push({x, y, r : val, g : val, b : val});
-    }
-  }
-  return mapData;
 }
 
 function generateTopAndBotData(width, height, nbtop, nbbot, rng) {
@@ -119,7 +146,7 @@ function generateTopAndBotData(width, height, nbtop, nbbot, rng) {
 
     if (!used.has(key)) {
       used.add(key);
-      mapInfos.push({x, y, r : 0, g : 0, b : 0});
+      mapInfos.push({x, y, h : 1});
     }
   }
 
@@ -130,52 +157,31 @@ function generateTopAndBotData(width, height, nbtop, nbbot, rng) {
 
     if (!used.has(key)) {
       used.add(key);
-      mapInfos.push({x, y, r : 255, g : 255, b : 255});
+      mapInfos.push({x, y, h : 0});
     } 
   }
 
   const mapStats = [];
+  const power = p.value; 
+  const nozero   = 1e-3;
+
   for (let y = 0; y < height; y++) {
     for (let x = 0; x < width; x++) {
-      const key = `${x}, ${y}`;
 
-      let extremum1 = {d : Infinity, h : null};
-      let extremum2 = {d : Infinity, h : null};
-
-      for (let i = 0; i < Number(nbtop) + Number(nbbot); i++) {
-        let distance = Math.sqrt((x - mapInfos[i].x)*(x - mapInfos[i].x) + (y - mapInfos[i].y)*(y - mapInfos[i].y));
-        if (distance < extremum1.d) {
-          extremum1.d = distance;
-          if (mapInfos[i].r == 255) {
-            extremum1.h = 0;
-          }
-          else {
-            extremum1.h = 1;
-          }
-        }
-        else if (distance < extremum2.d) {
-          extremum2.d = distance;
-          if (mapInfos[i].r == 255) {
-            extremum2.h = 0;
-          }
-          else {
-            extremum2.h = 1;
-          }
-        }
+      let num = 0, den = 0;
+      for (const s of mapInfos) {
+        const distance = Math.sqrt((x - s.x)*(x - s.x) + (y - s.y)*(y - s.y));
+        const poids = 1/Math.pow(distance + nozero, power);
+        num += s.h * poids;
+        den += poids;
       }
-
-      let hauteur = (extremum2.d * extremum1.h / (extremum1.d + extremum2.d) + extremum1.d * extremum2.h / (extremum1.d + extremum2.d)) * 255;
-
-      if (!used.has(key)) {
-        used.add(key);
-        mapStats.push({x, y, r : hauteur, g : hauteur, b : hauteur});
-      }
+      const hauteur = num/den;
+      const color = Math.round(255*(1 - hauteur));
+      mapStats.push({x, y, r : color, g : color, b : color});
     }
   }
 
-  mapInfos.push(...mapStats);
-
-  return mapInfos;
+  return mapStats;
 }
 
 /*function generateBotData(width, height, nbbot, rng) {
