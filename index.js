@@ -1,3 +1,6 @@
+
+
+
 var c = document.getElementById("myCanvas");
 c.setAttribute('style', 'display: none');
 var ctx = c.getContext("2d");
@@ -180,7 +183,10 @@ function generateMap(width, height, nbtop, nbbot, rng) {
       mapStats.push({h : hauteur});
     }
   }
+  window.mapWidth = width;
+  window.mapHeight = height;
   return mapStats;
+  
 }
 
 function drawMap(canvas, ctx, mapData, tpixel, height, width) {
@@ -189,7 +195,7 @@ function drawMap(canvas, ctx, mapData, tpixel, height, width) {
   for (let i = 0; i < mapData.length; i++) {
     const x = i % width;
     const y = Math.floor(i / width);
-    const couleur = Math.round(255*(mapData[i].h));
+    const couleur = Math.round(255*(1 - mapData[i].h));
     ctx.fillStyle = `rgb(${couleur}, ${couleur}, ${couleur})`;
     ctx.fillRect(x * tpixel, y * tpixel, tpixel, tpixel);
   }
@@ -201,5 +207,6 @@ function get_map_altitude(mapData, width, lenght) {
   for (let i = 0; i < width * lenght; i++) {
     tabAltitudes.push(mapData[i].h)
   }
+  window.mapStats = tabAltitudes;
   return tabAltitudes;
 } 

@@ -4,13 +4,21 @@
   <meta charset="UTF-8">
   <title>MyMap</title>
   <link rel="stylesheet" href="MyMap.css">
+
+  <script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three/examples/jsm/"
+  }
+}
+</script>
 </head>
 <body>
     <header>
         <h1>Bienvenue sur MyMap !</h1>
         <h2>Crée ta carte en 2D</h2>
     </header>
-    <script type="module" src="/main.js"></script>
     <main>
         <div class="englobeur">
             <nav>
@@ -47,5 +55,6 @@
         </div>
     </main>
     <script src="index.js"></script>
+    <script type="module" src="./main.js"></script>
 </body>
 </html>
