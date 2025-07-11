@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
     lastSeed   = seed2.value;
     rngGlobal  = RandomWithSeed(seed2.value);
   }
-  const mapDatas =  generateTopAndBotData(width.value, height.value, sommets.value, fonds.value, rngGlobal);
+  const mapDatas =  generateMap(width.value, height.value, sommets.value, fonds.value, rngGlobal);
 
   drawMap(c, ctx, mapDatas, tp.value, height.value, width.value);
 });
@@ -46,8 +46,9 @@ myButton.addEventListener("click", () => {
     lastSeed   = seed2.value;
     rngGlobal  = RandomWithSeed(seed2.value);
   }
-  const mapDatas =  generateTopAndBotData(width.value, height.value, sommets.value, fonds.value, rngGlobal);
+  const mapDatas =  generateMap(width.value, height.value, sommets.value, fonds.value, rngGlobal);
   drawMap(c, ctx, mapDatas, tp.value, height.value, width.value);
+  get_map_altitude(mapDatas, width.value, height.value)
 });
 
 myButtonDownload.addEventListener("click", () => {
@@ -135,7 +136,7 @@ function TestValues(width, height, seed, nbtop, nbbot, power, tpixel) {
     return true;
 }
 
-function generateTopAndBotData(width, height, nbtop, nbbot, rng) {
+function generateMap(width, height, nbtop, nbbot, rng) {
   const mapInfos = [];
   const used = new Set();
 
@@ -176,42 +177,29 @@ function generateTopAndBotData(width, height, nbtop, nbbot, rng) {
         den += poids;
       }
       const hauteur = num/den;
-      const color = Math.round(255*(1 - hauteur));
-      mapStats.push({x, y, r : color, g : color, b : color});
+      mapStats.push({h : hauteur});
     }
   }
-
   return mapStats;
 }
-
-/*function generateBotData(width, height, nbbot, rng) {
-  const mapFonds = [];
-  const used = new Set();
-
-  while (mapFonds.length < nbbot) {
-    const x = Math.floor(rng() * width);
-    const y = Math.floor(rng() * height);
-    const key = `${x},${y}`;
-
-    if (!used.has(key)) {
-      used.add(key);
-      mapFonds.push({ x, y, r: 255, g: 255, b: 255 });
-    }
-  }
-  return mapFonds;
-}*/
-
 
 function drawMap(canvas, ctx, mapData, tpixel, height, width) {
   canvas.width  = width * tpixel;
   canvas.height = height * tpixel;
   for (let i = 0; i < mapData.length; i++) {
-    const cell = mapData[i];
-    const x = cell.x * tpixel;
-    const y = cell.y * tpixel;
-    ctx.fillStyle = `rgb(${cell.r}, ${cell.g}, ${cell.b})`;
-    ctx.fillRect(x, y, tpixel, tpixel);
+    const x = i % width;
+    const y = Math.floor(i / width);
+    const couleur = Math.round(255*(mapData[i].h));
+    ctx.fillStyle = `rgb(${couleur}, ${couleur}, ${couleur})`;
+    ctx.fillRect(x * tpixel, y * tpixel, tpixel, tpixel);
   }
   canvas.style.display = 'block';
 }
 
+function get_map_altitude(mapData, width, lenght) {
+  tabAltitudes = [];
+  for (let i = 0; i < width * lenght; i++) {
+    tabAltitudes.push(mapData[i].h)
+  }
+  return tabAltitudes;
+} 
