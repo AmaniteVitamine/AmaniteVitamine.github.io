@@ -31,13 +31,17 @@ let rngGlobal = null;
 let lastSeed   = null;
 
 document.addEventListener('DOMContentLoaded', () => {
-  if (seed2.value !== lastSeed) {
+  /*if (seed2.value !== lastSeed) {
     lastSeed   = seed2.value;
     rngGlobal  = RandomWithSeed(seed2.value);
-  }
+  }*/
+  
+  rngGlobal  = RandomWithSeed(seed2.value);
+
   const mapDatas =  generateMap(width.value, height.value, sommets.value, fonds.value, rngGlobal);
 
   drawMap(c, ctx, mapDatas, tp.value, height.value, width.value);
+  get_map_altitude(mapDatas, width.value, height.value)
 });
 
 
@@ -45,10 +49,12 @@ myButton.addEventListener("click", () => {
   if (!TestValues(width.value,height.value,seed2.value,sommets.value, fonds.value, p.value, tp.value)) {
     return;
   };
-  if (seed2.value !== lastSeed) {
+  /*if (seed2.value !== lastSeed) {
     lastSeed   = seed2.value;
     rngGlobal  = RandomWithSeed(seed2.value);
-  }
+  }*/
+  rngGlobal  = RandomWithSeed(seed2.value);
+
   const mapDatas =  generateMap(width.value, height.value, sommets.value, fonds.value, rngGlobal);
   drawMap(c, ctx, mapDatas, tp.value, height.value, width.value);
   get_map_altitude(mapDatas, width.value, height.value)

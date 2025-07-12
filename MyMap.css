@@ -1,4 +1,4 @@
-body {
+html, body {
   font-family: sans-serif; /* Police sans empattement, style moderne et épuré */
   background: 
     linear-gradient(      /* Dégrade du fond */
@@ -6,6 +6,8 @@ body {
       #74ABE2 0%,         /* Couleur de départ à 0% */
       #e94cc4 100%        /* Couleur d’arrivée à 100% */
     );
+  background-attachment: fixed;
+  background-size: cover; 
   color: #fff;            /* Couleur du texte blanc pour contraster */
   display: flex;          /* On active Flexbox sur tout le body */
   flex-direction: column; /* Les enfants (header, main) sont empilés verticalement */
@@ -67,6 +69,7 @@ nav a.simple-text {
 }
 
 .englobeur {
+  position: relative;
   display: flex;            /* Active Flexbox sur le conteneur */
   flex-direction: row;      /* Aligne les enfants sur une ligne */
   align-items: flex-start;  /* Aligne le nav et le canvas en haut */
@@ -85,11 +88,12 @@ button {
   }
 
 .stats-panel {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  z-index: 1000; 
   border-radius: 10px;
-  position: fixed;
-  top: 3rem;
-  right: 5rem;
   background: rgba(255, 255, 255, 0.25);
-  padding: 0.8rem 0.8rem;
+  padding: 0.8rem;
   text-align: left;
 }
