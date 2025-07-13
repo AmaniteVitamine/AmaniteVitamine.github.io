@@ -12,6 +12,7 @@ const seed2 = document.getElementById("seed");
 const sommets = document.getElementById("som");
 const fonds = document.getElementById("fon");
 const p = document.getElementById("p");
+const hmax = document.getElementById("hmax");
 
 const myButton = document.getElementById("Creer");
 const myButtonDownload = document.getElementById("Telecharger");
@@ -38,9 +39,8 @@ document.addEventListener('DOMContentLoaded', () => {
   
   rngGlobal  = RandomWithSeed(seed2.value);
 
-  const mapDatas =  generateMap(width.value, height.value, sommets.value, fonds.value, rngGlobal);
+  const mapDatas =  generateMap(width.value, height.value, sommets.value, fonds.value, rngGlobal, hmax.value);
 
-  drawMap(c, ctx, mapDatas, tp.value, height.value, width.value);
   get_map_altitude(mapDatas, width.value, height.value)
 });
 
@@ -55,8 +55,7 @@ myButton.addEventListener("click", () => {
   }*/
   rngGlobal  = RandomWithSeed(seed2.value);
 
-  const mapDatas =  generateMap(width.value, height.value, sommets.value, fonds.value, rngGlobal);
-  drawMap(c, ctx, mapDatas, tp.value, height.value, width.value);
+  const mapDatas =  generateMap(width.value, height.value, sommets.value, fonds.value, rngGlobal, hmax.value);
   get_map_altitude(mapDatas, width.value, height.value)
 });
 
@@ -145,7 +144,7 @@ function TestValues(width, height, seed, nbtop, nbbot, power, tpixel) {
     return true;
 }
 
-function generateMap(width, height, nbtop, nbbot, rng) {
+function generateMap(width, height, nbtop, nbbot, rng, hmax) {
   const mapInfos = [];
   const used = new Set();
 
@@ -156,7 +155,8 @@ function generateMap(width, height, nbtop, nbbot, rng) {
 
     if (!used.has(key)) {
       used.add(key);
-      mapInfos.push({x, y, h : 1});
+      const hauteur = hmax - rng() * (hmax - (2/3)*hmax);
+      mapInfos.push({x, y, h : hauteur});
     }
   }
 
@@ -195,18 +195,6 @@ function generateMap(width, height, nbtop, nbbot, rng) {
   
 }
 
-function drawMap(canvas, ctx, mapData, tpixel, height, width) {
-  canvas.width  = width * tpixel;
-  canvas.height = height * tpixel;
-  for (let i = 0; i < mapData.length; i++) {
-    const x = i % width;
-    const y = Math.floor(i / width);
-    const couleur = Math.round(255*(1 - mapData[i].h));
-    ctx.fillStyle = `rgb(${couleur}, ${couleur}, ${couleur})`;
-    ctx.fillRect(x * tpixel, y * tpixel, tpixel, tpixel);
-  }
-  canvas.style.display = 'block';
-}
 
 function get_map_altitude(mapData, width, lenght) {
   tabAltitudes = [];

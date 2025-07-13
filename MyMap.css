@@ -28,6 +28,8 @@ main {
   display: flex;          /* Flexbox pour les enfants de main */
   gap: 1rem;              /* Espace fixe de 1rem entre les enfants */
   padding: 0 1rem;        /* 1rem de marge intérieure gauche/droite */
+  margin-left: -15rem;    /* ou une valeur à ton goût */
+  margin-right: auto;
 }
 
 nav {
@@ -69,11 +71,11 @@ nav a.simple-text {
 }
 
 .englobeur {
-  position: relative;
-  display: flex;            /* Active Flexbox sur le conteneur */
-  flex-direction: row;      /* Aligne les enfants sur une ligne */
-  align-items: flex-start;  /* Aligne le nav et le canvas en haut */
-  gap: 2rem;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: flex-start; /* Placer le contenu tout à gauche */
+  gap: 1rem;
 }
 
 #myCanvas {
@@ -96,4 +98,9 @@ button {
   background: rgba(255, 255, 255, 0.25);
   padding: 0.8rem;
   text-align: left;
+}
+
+#threeContainer {
+  position: relative;
+  margin-left: -6rem; 
 }
