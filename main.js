@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 
 function init3D() {
+  const heau = document.getElementById("heau");
 
 
     const container = document.getElementById('threeContainer');
@@ -82,7 +83,7 @@ function init3D() {
 
   scene.add(mesh, ligne);
 
-  mesheau.position.y = 15;
+  mesheau.position.y = heau.value;
   scene.add(mesheau);
 
 

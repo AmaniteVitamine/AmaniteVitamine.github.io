@@ -13,6 +13,7 @@ const sommets = document.getElementById("som");
 const fonds = document.getElementById("fon");
 const p = document.getElementById("p");
 const hmax = document.getElementById("hmax");
+const pmax = document.getElementById("pmax");
 
 const myButton = document.getElementById("Creer");
 const myButtonDownload = document.getElementById("Telecharger");
@@ -32,14 +33,9 @@ let rngGlobal = null;
 let lastSeed   = null;
 
 document.addEventListener('DOMContentLoaded', () => {
-  /*if (seed2.value !== lastSeed) {
-    lastSeed   = seed2.value;
-    rngGlobal  = RandomWithSeed(seed2.value);
-  }*/
-  
   rngGlobal  = RandomWithSeed(seed2.value);
 
-  const mapDatas =  generateMap(width.value, height.value, sommets.value, fonds.value, rngGlobal, hmax.value);
+  const mapDatas =  generateMap(width.value, height.value, sommets.value, fonds.value, rngGlobal, hmax.value, pmax.value);
 
   get_map_altitude(mapDatas, width.value, height.value)
 });
@@ -49,13 +45,9 @@ myButton.addEventListener("click", () => {
   if (!TestValues(width.value,height.value,seed2.value,sommets.value, fonds.value, p.value, tp.value)) {
     return;
   };
-  /*if (seed2.value !== lastSeed) {
-    lastSeed   = seed2.value;
-    rngGlobal  = RandomWithSeed(seed2.value);
-  }*/
   rngGlobal  = RandomWithSeed(seed2.value);
 
-  const mapDatas =  generateMap(width.value, height.value, sommets.value, fonds.value, rngGlobal, hmax.value);
+  const mapDatas =  generateMap(width.value, height.value, sommets.value, fonds.value, rngGlobal, hmax.value, pmax.value);
   get_map_altitude(mapDatas, width.value, height.value)
 });
 
@@ -144,7 +136,7 @@ function TestValues(width, height, seed, nbtop, nbbot, power, tpixel) {
     return true;
 }
 
-function generateMap(width, height, nbtop, nbbot, rng, hmax) {
+function generateMap(width, height, nbtop, nbbot, rng, hmax, pmax) {
   const mapInfos = [];
   const used = new Set();
 
@@ -167,7 +159,8 @@ function generateMap(width, height, nbtop, nbbot, rng, hmax) {
 
     if (!used.has(key)) {
       used.add(key);
-      mapInfos.push({x, y, h : 0});
+      const profondeur = pmax - rng() * (pmax - (2/3)*pmax);
+      mapInfos.push({x, y, h : profondeur});
     } 
   }
 
