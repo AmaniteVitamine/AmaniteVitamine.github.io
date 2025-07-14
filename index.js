@@ -51,16 +51,6 @@ myButton.addEventListener("click", () => {
   get_map_altitude(mapDatas, width.value, height.value)
 });
 
-myButtonDownload.addEventListener("click", () => {
-  const dataURL = c.toDataURL("image/png");
-  const link = document.createElement("a");
-  link.href = dataURL;
-  link.download = "MyMap.png";
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-});
-
 
 function TestValues(width, height, seed, nbtop, nbbot, power, tpixel) {
     if (width.trim() === "" || height.trim() === "" || power.trim() === "" || nbbot.trim() === "" || nbtop.trim() === "" || seed.trim() === "" || tpixel.trim() === "") {

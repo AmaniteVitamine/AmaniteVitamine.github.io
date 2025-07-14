@@ -1,7 +1,11 @@
 import * as THREE from 'three';
+import { GLTFExporter } from 'three/addons/exporters/GLTFExporter.js';
+
+
+window.threeRenderer = null;
 
 function init3D() {
-  const heau = document.getElementById("heau");
+    const heau = document.getElementById("heau");
 
 
     const container = document.getElementById('threeContainer');
@@ -11,19 +15,24 @@ function init3D() {
     const heights = window.mapStats; 
     const width   = window.mapWidth;
     const height  = window.mapHeight;
-    console.log(heights);
     
 
     const scene = new THREE.Scene();
+    window.scene = scene;
     
     const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-    camera.position.set(100, 70, 100);
+    const maxDim = Math.max(width, height);
+    camera.position.set(maxDim, maxDim * 0.5, maxDim);
     camera.lookAt(width/2, 0, height/2);
 
-    const renderer = new THREE.WebGLRenderer();
-    renderer.setSize( width*12, height*12 );
-    renderer.setClearColor(0x20232a, 0);
-    container.appendChild(renderer.domElement);
+
+    window.threeRenderer = new THREE.WebGLRenderer;
+    window.threeRenderer.setSize(container.clientWidth, container.clientHeight);
+    camera.aspect = container.clientWidth / container.clientHeight;
+    camera.updateProjectionMatrix();
+
+     window.threeRenderer.setClearColor(0x20232a, 0);
+    container.appendChild(window.threeRenderer.domElement);
 
   const geo = new THREE.PlaneGeometry(width, height, width - 1, height - 1);
   const geoeau = new THREE.PlaneGeometry(width, height, width - 1, height - 1);
@@ -36,15 +45,13 @@ function init3D() {
   const maxH   = Math.max(...heights);
   const minH   = Math.min(...heights);
 
-  const plusgrand = 40;
-
   const snowLevel = 0.7;
   const colorLow  = new THREE.Color(0x88cc88);
   const colorMid  = new THREE.Color(0xaaa588);
   const colorHigh = new THREE.Color(0xffffff);
 
   for (let i = 0; i < pos.count; i++) {
-    pos.setY(i, heights[i] * plusgrand);
+    pos.setY(i, heights[i]);
     const t = (heights[i] - minH) / (maxH - minH);
       if (t < snowLevel) {
     const u = t / snowLevel;
@@ -92,16 +99,46 @@ function init3D() {
     mesh.rotation.y += 0.003; 
     ligne.rotation.y += 0.003;
     mesheau.rotation.y += 0.003;
-    renderer.render(scene, camera);
+    window.threeRenderer.render(scene, camera);
   }
   animate();
 
 }
 
 
-document.addEventListener('click', init3D);
-
-window.addEventListener('load', init3D);
 
 
+function downloadGLTF() {
+  const exporter = new GLTFExporter();
+  const options = { binary: true };
+
+  exporter.parse(
+    window.scene,
+    function (result) {
+      let blob;
+      let filename;
+      if (options.binary) {
+        blob = new Blob([result], { type: 'application/octet-stream' });
+        filename = 'MyMap3D.glb';
+      } else {
+        const output = JSON.stringify(result, null, 2);
+        blob = new Blob([output], { type: 'application/json' });
+        filename = 'MyMap3D.gltf';
+      }
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    },
+    options
+  );
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById("Creer").addEventListener("click", init3D);
+  document.getElementById("Telecharger").addEventListener("click", downloadGLTF);
+  init3D();
+});
 

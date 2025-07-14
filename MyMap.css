@@ -39,6 +39,8 @@ nav {
   border-radius: 15px;                /* Angles arrondis de 15px */
   padding: 1rem;                      /* Espace intérieur autour du contenu */
   position: relative;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
 }
 
 nav a {
@@ -101,6 +103,11 @@ button {
 }
 
 #threeContainer {
+  flex: 1 1 auto;
+  min-width: 800px;      
+  width: 100%;
+  height:1200px;
   position: relative;
-  margin-left: -6rem; 
+  align-self: center; 
 }
+
