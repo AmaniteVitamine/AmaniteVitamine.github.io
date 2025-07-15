@@ -9,6 +9,8 @@ function init3D() {
     const container = document.getElementById('threeContainer');
     const slider    = document.getElementById("slider");
     const opDisplay = document.getElementById("op");
+    const lignestoggle = document.getElementById('lignestoggle');
+    lignestoggle.checked = true;
 
     const opacityInitial = parseFloat(slider.value);
 
@@ -44,10 +46,15 @@ function init3D() {
   const pos = geo.attributes.position;
   const colors = [];
   const color  = new THREE.Color();
-  const maxH   = Math.max(...heights);
-  const minH   = Math.min(...heights);
+
+  let maxH = -Infinity, minH = Infinity;
+for (let h of heights) {
+    if (h > maxH) maxH = h;
+    if (h < minH) minH = h;
+}
 
   const snowLevel = 0.7;
+
   const colorLow  = new THREE.Color(0x88cc88);
   const colorMid  = new THREE.Color(0xaaa588);
   const colorHigh = new THREE.Color(0xffffff);
@@ -91,6 +98,10 @@ function init3D() {
   const mesheau = new THREE.Mesh(geoeau, mateau);
 
   mesheau.position.y = heau.value;
+
+  ligne.visible = lignestoggle.checked;
+  
+
   scene.add(mesh, ligne, mesheau);
 
 
@@ -101,6 +112,11 @@ function init3D() {
     opDisplay.textContent = v.toFixed(2);
     mesheau.material.opacity = v;
   });
+
+  lignestoggle.addEventListener('change', () => {
+    ligne.visible = lignestoggle.checked;
+  });
+
 
 
   function animate() {
