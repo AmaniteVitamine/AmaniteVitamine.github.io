@@ -158,6 +158,7 @@ function generateMap(width, height, nbtop, nbbot, rng, hmax, pmax) {
   const power = p.value; 
   const nozero   = 1e-3;
 
+
   for (let y = 0; y < height; y++) {
     for (let x = 0; x < width; x++) {
 
@@ -168,8 +169,8 @@ function generateMap(width, height, nbtop, nbbot, rng, hmax, pmax) {
         num += s.h * poids;
         den += poids;
       }
-      const hauteur = num/den;
-      mapStats.push({h : hauteur});
+      const hauteurtot = num/den + Math.pow(-1, Math.floor(rng()*1000)) * (rng() % (0.005 * hmax));
+      mapStats.push({h : hauteurtot});
     }
   }
   window.mapWidth = width;

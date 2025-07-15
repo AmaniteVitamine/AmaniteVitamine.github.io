@@ -6,9 +6,11 @@ window.threeRenderer = null;
 
 function init3D() {
     const heau = document.getElementById("heau");
-
-
     const container = document.getElementById('threeContainer');
+    const slider    = document.getElementById("slider");
+    const opDisplay = document.getElementById("op");
+
+    const opacityInitial = parseFloat(slider.value);
 
     container.innerHTML = '';
 
@@ -77,7 +79,7 @@ function init3D() {
 
   const mateau = new THREE.MeshBasicMaterial({
     color: 0x280ED3,
-    opacity: 0.6,
+    opacity: slider.value,
     transparent: true,
     side: THREE.DoubleSide
   });
@@ -88,10 +90,17 @@ function init3D() {
   );
   const mesheau = new THREE.Mesh(geoeau, mateau);
 
-  scene.add(mesh, ligne);
-
   mesheau.position.y = heau.value;
-  scene.add(mesheau);
+  scene.add(mesh, ligne, mesheau);
+
+
+  opDisplay.textContent = opacityInitial.toFixed(2);
+
+  slider.addEventListener('input', () => {
+    const v = parseFloat(slider.value);
+    opDisplay.textContent = v.toFixed(2);
+    mesheau.material.opacity = v;
+  });
 
 
   function animate() {

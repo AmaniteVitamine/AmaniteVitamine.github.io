@@ -42,7 +42,7 @@
                 <input type="text" id="fon" name="fon" value="5" style="width: 100%; margin-bottom: 0.8rem;">
 
                 <a class="simple-text">Puissance des pentes : </a>
-                <input type="text" id="p" name="p" value="1.9" style="width: 100%; margin-bottom: 0.8rem;">
+                <input type="text" id="p" name="p" value="1.45" style="width: 100%; margin-bottom: 0.8rem;">
 
                 <button id="Creer">Créer</button>
             </nav>
@@ -54,6 +54,8 @@
                 <input type="text" id="pmax" name="pmax" value="0" style="width: 100%; margin-bottom: 0.8rem;">
                 <a class="simple-text">Hauteur eau :</a>
                 <input type="text" id="heau" name="heau" value="15" style="width: 100%; margin-bottom: 0.8rem;">
+                <label for="slider">Opacité eau : <span id="op">0.60</span></label>
+                <input type="range" id="slider" min="0" max="1" step="0.01" value="0.6" style="width:100%;"/>
             </nav>
             <canvas id="myCanvas" width="200" height="100"></canvas>
             <div id="threeContainer" style="flex:1; position:relative;"></div>
