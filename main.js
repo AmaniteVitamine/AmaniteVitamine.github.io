@@ -4,25 +4,23 @@ import { GLTFExporter } from 'three/addons/exporters/GLTFExporter.js';
 
 window.threeRenderer = null;
 
-function init3D() {
-    const heau = document.getElementById("heau");
-    const container = document.getElementById('threeContainer');
-    const sliderOpWater    = document.getElementById("sliderOpWater");
-    const opDisplay = document.getElementById("op");
-    const lignestoggle = document.getElementById('lignestoggle');
-    lignestoggle.checked = true;
+function display_map(heights, settings_map, settings, container) {
+    const heau = settings.heau;
+    const sliderOpWater = settings.sliderOpWater ;
+    const opDisplay = settings.opDisplay;
+    const lignestoggle = settings.lignestoggle;
+    // lignestoggle.checked = true;
 
-    const opacityInitial = parseFloat(sliderOpWater.value);
+    const width = settings_map.width;
+    const height = settings_map.height;
+
+    const opacityInitial = parseFloat(sliderOpWater);
 
     container.innerHTML = '';
 
-    const heights = window.mapStats; 
-    const width   = window.mapWidth;
-    const height  = window.mapHeight;
-    
-
+    const directionalLight = new THREE.DirectionalLight( 0xffffff, 0.5 );
     const scene = new THREE.Scene();
-    window.scene = scene;
+    scene.add( directionalLight );
     
     const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
     const maxDim = Math.max(width, height);
@@ -86,7 +84,7 @@ for (let h of heights) {
 
   const mateau = new THREE.MeshBasicMaterial({
     color: 0x280ED3,
-    opacity: sliderOpWater.value,
+    opacity: sliderOpWater,
     transparent: true,
     side: THREE.DoubleSide
   });
@@ -97,27 +95,11 @@ for (let h of heights) {
   );
   const mesheau = new THREE.Mesh(geoeau, mateau);
 
-  mesheau.position.y = heau.value;
+  mesheau.position.y = heau;
 
   ligne.visible = lignestoggle.checked;
-  
 
   scene.add(mesh, ligne, mesheau);
-
-
-  opDisplay.textContent = opacityInitial.toFixed(2);
-
-  sliderOpWater.addEventListener('input', () => {
-    const v = parseFloat(sliderOpWater.value);
-    opDisplay.textContent = v.toFixed(2);
-    mesheau.material.opacity = v;
-  });
-
-  lignestoggle.addEventListener('change', () => {
-    ligne.visible = lignestoggle.checked;
-  });
-
-
 
   function animate() {
     requestAnimationFrame(animate);
@@ -129,8 +111,6 @@ for (let h of heights) {
   animate();
 
 }
-
-
 
 
 function downloadGLTF() {
@@ -161,9 +141,120 @@ function downloadGLTF() {
   );
 }
 
+function get_map_settings() {
+    const height = Number(document.getElementById("height").value);
+    const width =        Number(document.getElementById("width").value);
+    const nbtop =        Number(document.getElementById("som").value);
+    const nbbot =        Number(document.getElementById("fon").value);
+    const seed =         Number(document.getElementById("seed").value);
+    const hmax =         Number(document.getElementById("hmax").value);
+    const pmax =         Number(document.getElementById("pmax").value);
+    const puissance =    Number(document.getElementById('p').value);
+    const sliderPower  = Number(document.getElementById('p').value);
+    const tp = 5;
+
+    return {
+        height:       height,
+        width:        width,
+        nbtop:        nbtop,
+        nbbot:        nbbot,
+        seed:         seed,
+        hmax:         hmax,
+        pmax:         pmax,
+        puissance:    puissance,
+        sliderPower: sliderPower 
+    }
+}
+
+function get_view_settings() {
+    const heau =            Number( document.getElementById("heau").value);
+    const sliderOpWater =   Number( document.getElementById("sliderOpWater").value);
+    // DEBUG ME
+    // const lignestoggle =    document.getElementById('lignestoggle').value == '' 
+    const lignestoggle = false;
+
+    return {
+        heau          :  heau         ,
+        sliderOpWater :  sliderOpWater,
+        lignestoggle  :  lignestoggle 
+    }
+}
+
+function generate_map(settings) {
+    const mapInfos = [];
+    const used = new Set();
+
+    let rng = RandomWithSeed(settings.seed);
+
+    while (mapInfos.length < settings.nbtop) {
+        const x = Math.floor(rng() * settings.width);
+        const y = Math.floor(rng() * settings.height);
+        const key = `${x},${y}`;
+
+        if (!used.has(key)) {
+            used.add(key);
+            const hauteur = settings.hmax - rng() * (settings.hmax - (2/3)*settings.hmax);
+            mapInfos.push({x, y, h : hauteur});
+        }
+    }
+
+    while (mapInfos.length < Number(settings.nbtop) + Number(settings.nbbot)) {
+        const x = Math.floor(rng() * settings.width);
+        const y = Math.floor(rng() * settings.height);
+        const key = `${x},${y}`;
+
+        if (!used.has(key)) {
+            used.add(key);
+            const profondeur = settings.pmax - rng() * (settings.pmax - (2/3)*settings.pmax);
+            mapInfos.push({x, y, h : profondeur});
+        } 
+    }
+
+    const mapStats = [];
+    const power = settings.puissance; 
+    const nozero   = 1e-3;
+
+
+    for (let y = 0; y < settings.height; y++) {
+        for (let x = 0; x < settings.width; x++) {
+
+            let num = 0, den = 0;
+            for (const s of mapInfos) {
+                const distance = Math.sqrt((x - s.x)*(x - s.x) + (y - s.y)*(y - s.y));
+                const poids = 1/Math.pow(distance + nozero, power);
+                num += s.h * poids;
+                den += poids;
+            }
+            const hauteurtot = num/den + Math.pow(-1, Math.floor(rng()*1000)) * (rng() % (0.005 * settings.hmax));
+            // don't use get_map_altitude just build the altitude only array here
+            mapStats.push({h : hauteurtot});
+        }
+    }
+    // FIXME - don't modify window from wihtin a function
+    window.mapWidth = width;
+    window.mapHeight = height;
+
+    return get_map_altitude(mapStats, settings.width, settings.height);
+}
+
+function display() {
+    let settings_map = get_map_settings();
+    let settings_view = get_view_settings();
+    const container = document.getElementById('threeContainer');
+    display_map(window.map, settings_map, settings_view, container);
+}
+function generate_and_display() {
+    let settings_map = get_map_settings();
+    let settings_view = get_view_settings();
+    let map = generate_map(settings_map);
+    window.map = map;
+    const container = document.getElementById('threeContainer');
+    display_map(window.map, settings_map, settings_view, container);
+}
+
 document.addEventListener('DOMContentLoaded', () => {
-  document.getElementById("Creer").addEventListener("click", init3D);
+  document.getElementById("Creer").addEventListener("click", generate_and_display);
   document.getElementById("Telecharger").addEventListener("click", downloadGLTF);
-  init3D();
+
 });
 
