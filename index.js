@@ -7,11 +7,12 @@ var ctx = c.getContext("2d");
 
 const height = document.getElementById("height");
 const width = document.getElementById("width");
-const tp = document.getElementById("tp");
+const tp = 5;
 const seed2 = document.getElementById("seed");
 const sommets = document.getElementById("som");
 const fonds = document.getElementById("fon");
-const p = document.getElementById("p");
+const sliderPower  = document.getElementById('p');
+const powerDisplay = document.getElementById('power');
 const hmax = document.getElementById("hmax");
 const pmax = document.getElementById("pmax");
 
@@ -35,9 +36,31 @@ let lastSeed   = null;
 document.addEventListener('DOMContentLoaded', () => {
   rngGlobal  = RandomWithSeed(seed2.value);
 
-  const mapDatas =  generateMap(width.value, height.value, sommets.value, fonds.value, rngGlobal, hmax.value, pmax.value);
+  const mapDatas =  generateMap(width.value, height.value, sommets.value, fonds.value, rngGlobal, hmax.value, pmax.value, sliderPower.value);
 
   get_map_altitude(mapDatas, width.value, height.value)
+
+  sliderPower.addEventListener('input', () => {
+    const v = parseFloat(sliderPower.value);
+    powerDisplay.textContent = v.toFixed(2);
+
+  const w    = parseInt(width.value, 10);
+  const h    = parseInt(height.value,10);
+  const seed = parseInt(seed2.value, 10);
+  const nbTop  = parseInt(sommets.value,10);
+  const nbBot  = parseInt(fonds.value,10);
+  const hmax2 = parseFloat(hmax.value);
+  const pmax2 = parseFloat(pmax.value);
+  const power = parseFloat(sliderPower.value);
+
+  rngGlobal = RandomWithSeed(seed);
+  const mapData = generateMap(w, h, nbTop, nbBot, rngGlobal,hmax2, pmax2, power);
+  const map = get_map_altitude(mapData, w, h);
+  window.mapStats = map;
+  init3D();
+  });
+  sliderPower.dispatchEvent(new Event('input'));
+
 });
 
 
@@ -47,7 +70,7 @@ myButton.addEventListener("click", () => {
   };
   rngGlobal  = RandomWithSeed(seed2.value);
 
-  const mapDatas =  generateMap(width.value, height.value, sommets.value, fonds.value, rngGlobal, hmax.value, pmax.value);
+  const mapDatas =  generateMap(width.value, height.value, sommets.value, fonds.value, rngGlobal, hmax.value, pmax.value, sliderPower.value);
   get_map_altitude(mapDatas, width.value, height.value)
 });
 
@@ -126,7 +149,7 @@ function TestValues(width, height, seed, nbtop, nbbot, power, tpixel) {
     return true;
 }
 
-function generateMap(width, height, nbtop, nbbot, rng, hmax, pmax) {
+function generateMap(width, height, nbtop, nbbot, rng, hmax, pmax, puissance) {
   const mapInfos = [];
   const used = new Set();
 
@@ -155,7 +178,7 @@ function generateMap(width, height, nbtop, nbbot, rng, hmax, pmax) {
   }
 
   const mapStats = [];
-  const power = p.value; 
+  const power = puissance; 
   const nozero   = 1e-3;
 
 

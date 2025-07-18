@@ -29,9 +29,6 @@
                 <a class="simple-text">Largeur map :</a>
                 <input type="text" id="width" name="width" value="150" style="width: 100%; margin-bottom: 0.8rem;">
 
-                <a class="simple-text">Taille pixels :</a>
-                <input type="text" id="tp" name="tp" value="5" style="width: 100%; margin-bottom: 0.8rem;">
-
                 <a class="simple-text">Seed : </a>
                 <input type="text" id="seed" name="seed" value="24120945" style="width: 100%; margin-bottom: 0.8rem;">
 
@@ -41,10 +38,10 @@
                 <a class="simple-text">Nombre fonds : </a>
                 <input type="text" id="fon" name="fon" value="5" style="width: 100%; margin-bottom: 0.8rem;">
 
-                <a class="simple-text">Puissance des pentes : </a>
-                <input type="text" id="p" name="p" value="1.45" style="width: 100%; margin-bottom: 0.8rem;">
+                <label for="p">Puissance des pentes : <span id="power">1.45</span></label>
+                <input type="range" id="p" min="0.1" max="5" step="0.01" value="1.45" style="width:100%;"/>
 
-                <button id="Creer">Créer</button>
+                <br><br><br><button id="Creer">Créer</button>
             </nav>
             <nav>
               <a class="up-text">Informations nécessaires</a>
@@ -54,8 +51,8 @@
                 <input type="text" id="pmax" name="pmax" value="0" style="width: 100%; margin-bottom: 0.8rem;">
                 <a class="simple-text">Hauteur eau :</a>
                 <input type="text" id="heau" name="heau" value="15" style="width: 100%; margin-bottom: 0.8rem;">
-                <label for="slider">Opacité eau : <span id="op">0.60</span></label>
-                <input type="range" id="slider" min="0" max="1" step="0.01" value="0.6" style="width:100%;"/>
+                <label for="sliderOpWater">Opacité eau : <span id="op">0.60</span></label>
+                <input type="range" id="sliderOpWater" min="0" max="1" step="0.01" value="0.6" style="width:100%;"/>
                 <label style="display:block; margin-top:0.5rem;">
                 <input type="checkbox" id="lignestoggle" />Afficher les lignes</label>
             </nav>

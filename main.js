@@ -7,12 +7,12 @@ window.threeRenderer = null;
 function init3D() {
     const heau = document.getElementById("heau");
     const container = document.getElementById('threeContainer');
-    const slider    = document.getElementById("slider");
+    const sliderOpWater    = document.getElementById("sliderOpWater");
     const opDisplay = document.getElementById("op");
     const lignestoggle = document.getElementById('lignestoggle');
     lignestoggle.checked = true;
 
-    const opacityInitial = parseFloat(slider.value);
+    const opacityInitial = parseFloat(sliderOpWater.value);
 
     container.innerHTML = '';
 
@@ -86,7 +86,7 @@ for (let h of heights) {
 
   const mateau = new THREE.MeshBasicMaterial({
     color: 0x280ED3,
-    opacity: slider.value,
+    opacity: sliderOpWater.value,
     transparent: true,
     side: THREE.DoubleSide
   });
@@ -107,8 +107,8 @@ for (let h of heights) {
 
   opDisplay.textContent = opacityInitial.toFixed(2);
 
-  slider.addEventListener('input', () => {
-    const v = parseFloat(slider.value);
+  sliderOpWater.addEventListener('input', () => {
+    const v = parseFloat(sliderOpWater.value);
     opDisplay.textContent = v.toFixed(2);
     mesheau.material.opacity = v;
   });
