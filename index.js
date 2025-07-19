@@ -57,7 +57,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const mapData = generateMap(w, h, nbTop, nbBot, rngGlobal,hmax2, pmax2, power);
   const map = get_map_altitude(mapData, w, h);
   window.mapStats = map;
-  init3D();
   });
   sliderPower.dispatchEvent(new Event('input'));
 
@@ -65,7 +64,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 myButton.addEventListener("click", () => {
-  if (!TestValues(width.value,height.value,seed2.value,sommets.value, fonds.value, p.value, tp.value)) {
+  if (!TestValues(width.value,height.value,seed2.value,sommets.value, fonds.value, p.value)) {
     return;
   };
   rngGlobal  = RandomWithSeed(seed2.value);
@@ -75,8 +74,8 @@ myButton.addEventListener("click", () => {
 });
 
 
-function TestValues(width, height, seed, nbtop, nbbot, power, tpixel) {
-    if (width.trim() === "" || height.trim() === "" || power.trim() === "" || nbbot.trim() === "" || nbtop.trim() === "" || seed.trim() === "" || tpixel.trim() === "") {
+function TestValues(width, height, seed, nbtop, nbbot, power) {
+    if (width.trim() === "" || height.trim() === "" || power.trim() === "" || nbbot.trim() === "" || nbtop.trim() === "" || seed.trim() === "") {
       alert("Erreur : veuillez compléter toutes les cases.");  
       return false;
     }
@@ -100,10 +99,6 @@ function TestValues(width, height, seed, nbtop, nbbot, power, tpixel) {
     }
     if (nbbot % 1 !== 0) {
       alert("Erreur : veuillez saisir un nombre entier pour votre nombre de fonds.");  
-      return false;
-    }
-    if (tpixel % 1 !== 0) {
-      alert("Erreur : veuillez saisir un nombre entier pour votre taille de pixel.")
       return false;
     }
 
@@ -204,6 +199,7 @@ function generateMap(width, height, nbtop, nbbot, rng, hmax, pmax, puissance) {
 
 
 function get_map_altitude(mapData, width, lenght) {
+    console.log("I'm called");
   tabAltitudes = [];
   for (let i = 0; i < width * lenght; i++) {
     tabAltitudes.push(mapData[i].h)
@@ -211,3 +207,19 @@ function get_map_altitude(mapData, width, lenght) {
   window.mapStats = tabAltitudes;
   return tabAltitudes;
 } 
+
+/*
+ *
+ * to adjust to monitor those values
+  opDisplay.textContent = opacityInitial.toFixed(2);
+  sliderOpWater.addEventListener('input', () => {
+    const v = parseFloat(sliderOpWater.value);
+    opDisplay.textContent = v.toFixed(2);
+    mesheau.material.opacity = v;
+  });
+
+  lignestoggle.addEventListener('change', () => {
+    ligne.visible = lignestoggle.checked;
+  });
+
+  */
