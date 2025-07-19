@@ -237,5 +237,5 @@ function get_map_altitude(mapData, width, lenght) {
   lignestoggle.addEventListener('change', () => {
     ligne.visible = lignestoggle.checked;
   });
-
+a
   */
