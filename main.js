@@ -4,33 +4,16 @@ import { GLTFExporter } from 'three/addons/exporters/GLTFExporter.js';
 
 window.threeRenderer = null;
 
-function init3D() {
-    const heau = document.getElementById("heau");
-    const container = document.getElementById('threeContainer');
-    const sliderOpWater    = document.getElementById("sliderOpWater");
-    const opDisplay = document.getElementById("op");
-    const lignestoggle = document.getElementById('lignestoggle');
-    lignestoggle.checked = true;
+function display_map(heights, settings_map, settings, container) {
+    const heau = settings.heau;
+    const sliderOpWater = settings.sliderOpWater;
+    const lignestoggle = settings.lignestoggle;
 
-    const opacityInitial = parseFloat(sliderOpWater.value);
+    const width = settings_map.width;
+    const height = settings_map.height;
 
     container.innerHTML = '';
-
-    const heights = window.mapStats; 
-    const width   = window.mapWidth;
-    const height  = window.mapHeight;
-    
-
-    const scene = new THREE.Scene();
-    window.scene = scene;
-    
-    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-    const maxDim = Math.max(width, height);
-    camera.position.set(maxDim, maxDim * 0.5, maxDim);
-    camera.lookAt(width/2, 0, height/2);
-
-
-    window.threeRenderer = new THREE.WebGLRenderer;
+    window.threeRenderer = new THREE.WebGLRenderer({ antialias: true });
     window.threeRenderer.setSize(container.clientWidth, container.clientHeight);
     window.threeRenderer.setClearColor(0x20232a, 0);
     window.threeRenderer.shadowMap.enabled = true;
@@ -51,111 +34,88 @@ function init3D() {
 
     scene.add(new THREE.AmbientLight(0xffffff, 0.2));
 
-    const camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
+    const camera = new THREE.PerspectiveCamera(
+        75,
+        container.clientWidth / container.clientHeight,
+        0.1,
+        1000
+    );
     camera.position.set(width, height * 0.5, width);
     camera.lookAt(width / 2, 0, height / 2);
 
     const geo = new THREE.PlaneGeometry(width, height, width - 1, height - 1);
     geo.rotateX(-Math.PI / 2);
-
-  const pos = geo.attributes.position;
-  const colors = [];
-  const color  = new THREE.Color();
-
-  let maxH = -Infinity, minH = Infinity;
-for (let h of heights) {
-    if (h > maxH) maxH = h;
-    if (h < minH) minH = h;
-}
-
-  const snowLevel = 0.7;
-
-  const colorLow  = new THREE.Color(0x88cc88);
-  const colorMid  = new THREE.Color(0xaaa588);
-  const colorHigh = new THREE.Color(0xffffff);
-
-  for (let i = 0; i < pos.count; i++) {
-    pos.setY(i, heights[i]);
-    const t = (heights[i] - minH) / (maxH - minH);
-      if (t < snowLevel) {
-    const u = t / snowLevel;
-    color.lerpColors(colorLow, colorMid, u);
-  }
-  else {
-    const u = (t - snowLevel) / (1 - snowLevel);
-    color.lerpColors(colorMid, colorHigh, u);
-  }
-
-  colors.push(color.r, color.g, color.b);
-}
-
-
-  geo.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
-  
-  const mat = new THREE.MeshBasicMaterial({
-    vertexColors: true,
-    side: THREE.DoubleSide
-  });
-
-  const mesh = new THREE.Mesh(geo, mat);
-
-  const mateau = new THREE.MeshBasicMaterial({
-    color: 0x280ED3,
-    opacity: sliderOpWater.value,
-    transparent: true,
-    opacity:     sliderOpWater,
-    side:        THREE.DoubleSide,
-    depthWrite:  false,
-});
-mateau.polygonOffset        = true;
-mateau.polygonOffsetFactor  = -1;
-mateau.polygonOffsetUnits   = 1;
-const mesheau = new THREE.Mesh(geoeau, mateau);
-mesheau.position.set(0, heau, 0);
-mesheau.receiveShadow = false;
-mesheau.castShadow    = false;
-mesheau.renderOrder   = 1;
-scene.add(mesheau);
-
-  const ligne = new THREE.LineSegments(
-    new THREE.WireframeGeometry(geo),
-    new THREE.LineBasicMaterial({ color: 0x222222 })
-  );
-  const mesheau = new THREE.Mesh(geoeau, mateau);
-
-  mesheau.position.y = heau.value;
-
-  ligne.visible = lignestoggle.checked;
-  
-
-  scene.add(mesh, ligne, mesheau);
-
-
-  opDisplay.textContent = opacityInitial.toFixed(2);
-
-  sliderOpWater.addEventListener('input', () => {
-    const v = parseFloat(sliderOpWater.value);
-    opDisplay.textContent = v.toFixed(2);
-    mesheau.material.opacity = v;
-  });
-
-  lignestoggle.addEventListener('change', () => {
-    ligne.visible = lignestoggle.checked;
-  });
-
-
-
-    function animate() {
-        requestAnimationFrame(animate);
-        mesh.rotation.y += 0.003;
-        ligne.rotation.y += 0.003;
-        mesheau.rotation.y += 0.003;
-        window.threeRenderer.render(scene, camera);
+    const pos = geo.attributes.position;
+    const colors = [];
+    const color = new THREE.Color();
+    let minH = Infinity, maxH = -Infinity;
+    for (let h of heights) {
+        minH = Math.min(minH, h);
+        maxH = Math.max(maxH, h);
     }
-    animate();
+    const snowLevel = 0.7;
+    const low  = new THREE.Color(0x88cc88);
+    const mid  = new THREE.Color(0xaaa588);
+    const high = new THREE.Color(0xffffff);
+    for (let i = 0; i < pos.count; i++) {
+        const h = heights[i];
+        pos.setY(i, h);
+        const t = (h - minH) / (maxH - minH);
+        if (t < snowLevel) color.lerpColors(low, mid, t / snowLevel);
+        else              color.lerpColors(mid, high, (t - snowLevel) / (1 - snowLevel));
+        colors.push(color.r, color.g, color.b);
+    }
+    geo.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+
+    const mat = new THREE.MeshStandardMaterial({
+        vertexColors: true,
+        side: THREE.DoubleSide
+    });
+    const mesh = new THREE.Mesh(geo, mat);
+    mesh.castShadow = true;
+    mesh.receiveShadow = true;
+    scene.add(mesh);
+
+    directionalLight.target = mesh;
+    scene.add(directionalLight.target);
+
+    const geoeau = new THREE.PlaneGeometry(width, height, 1, 1);
+    geoeau.rotateX(-Math.PI / 2);
+    const mateau = new THREE.MeshStandardMaterial({
+        color:       0x4060d0,
+        transparent: true,
+        opacity:     sliderOpWater,
+        side:        THREE.DoubleSide,
+        depthWrite:  false
+    });
+    mateau.polygonOffset       = true;
+    mateau.polygonOffsetFactor = -1;
+    mateau.polygonOffsetUnits  =  1;
+    const mesheau = new THREE.Mesh(geoeau, mateau);
+    mesheau.position.set(0, heau, 0);
+    mesheau.castShadow    = false;
+    mesheau.receiveShadow = false;
+    mesheau.renderOrder   = 1;
+    scene.add(mesheau);
+
+    const ligne = new THREE.LineSegments(
+        new THREE.WireframeGeometry(geo),
+        new THREE.LineBasicMaterial({ color: 0x222222 })
+    );
+    ligne.visible = lignestoggle.checked;
+    lignestoggle.addEventListener('change', () => {
+        ligne.visible = lignestoggle.checked;
+    });
+    scene.add(ligne);
+
+    (function animate() {
+        requestAnimationFrame(animate);
+        mesh.rotation.y   += 0.003;
+        ligne.rotation.y  += 0.003;
+        mesheau.rotation.y+= 0.003;
+        window.threeRenderer.render(scene, camera);
+    })();
 }
-
-
 
 
 function downloadGLTF() {
@@ -178,8 +138,83 @@ function downloadGLTF() {
   );
 }
 
+function get_map_settings() {
+  return {
+    height:    Number(document.getElementById("height").value),
+    width:     Number(document.getElementById("width").value),
+    nbtop:     Number(document.getElementById("som").value),
+    nbbot:     Number(document.getElementById("fon").value),
+    seed:      Number(document.getElementById("seed").value),
+    hmax:      Number(document.getElementById("hmax").value),
+    pmax:      Number(document.getElementById("pmax").value),
+    puissance: Number(document.getElementById("p").value)
+  };
+}
+
+function get_view_settings() {
+  return {
+    heau:          Number(document.getElementById("heau").value),
+    sliderOpWater: Number(document.getElementById("sliderOpWater").value),
+    lignestoggle:  document.getElementById('lignestoggle')
+  };
+}
+
+function generate_map(settings) {
+  const mapInfos = [], used = new Set();
+  let rng = RandomWithSeed(settings.seed);
+
+  while (mapInfos.length < settings.nbtop) {
+    const x = Math.floor(rng() * settings.width);
+    const y = Math.floor(rng() * settings.height);
+    const k = `${x},${y}`
+    if (!used.has(k)) {
+      used.add(k);
+      mapInfos.push({
+        x, y,
+        h: settings.hmax - rng() * (settings.hmax * (1/3))
+      });
+    }
+  }
+  while (mapInfos.length < settings.nbtop + settings.nbbot) {
+    const x = Math.floor(rng() * settings.width);
+    const y = Math.floor(rng() * settings.height);
+    const k = `${x},${y}`
+    if (!used.has(k)) {
+      used.add(k);
+      mapInfos.push({
+        x, y,
+        h: settings.pmax - rng() * (settings.pmax * (1/3))
+      });
+    }
+  }
+
+  const stats = [], nozero = 1e-3, p = settings.puissance;
+  for (let y = 0; y < settings.height; y++) {
+    for (let x = 0; x < settings.width; x++) {
+      let num = 0, den = 0;
+      for (const s of mapInfos) {
+        const d = Math.hypot(x - s.x, y - s.y);
+        const w = 1 / Math.pow(d + nozero, p);
+        num += s.h * w;
+        den += w;
+      }
+      stats.push({ h: num / den });
+    }
+  }
+
+  return stats.map(o => o.h);
+}
+
+function generate_and_display() {
+  const sm = get_map_settings();
+  const sv = get_view_settings();
+  const container = document.getElementById('threeContainer');
+  const map = generate_map(sm);
+  window.map = map;
+  display_map(map, sm, sv, container);
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   document.getElementById("Creer").addEventListener("click", generate_and_display);
   document.getElementById("Telecharger").addEventListener("click", downloadGLTF);
-  init3D();
 });
