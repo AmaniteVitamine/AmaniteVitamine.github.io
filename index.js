@@ -223,3 +223,19 @@ function get_map_altitude(mapData, width, lenght) {
   });
 
   */
+
+/*
+ *
+ * to adjust to monitor those values
+  opDisplay.textContent = opacityInitial.toFixed(2);
+  sliderOpWater.addEventListener('input', () => {
+    const v = parseFloat(sliderOpWater.value);
+    opDisplay.textContent = v.toFixed(2);
+    mesheau.material.opacity = v;
+  });
+
+  lignestoggle.addEventListener('change', () => {
+    ligne.visible = lignestoggle.checked;
+  });
+
+  */
