@@ -217,4 +217,5 @@ function generate_and_display() {
 document.addEventListener('DOMContentLoaded', () => {
   document.getElementById("Creer").addEventListener("click", generate_and_display);
   document.getElementById("Telecharger").addEventListener("click", downloadGLTF);
+    generate_and_display();
 });
